@@ -4,21 +4,77 @@
   <title>BAGT - Gate Pass Outward</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f2f2f2; display: flex; justify-content: center; flex-direction: column; align-items: center; min-height: 100vh; }
-    form, #successMessage { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
-    h2 { text-align: center; color: #2c3e50; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      align-items: center;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
     input[type="text"],
     input[type="date"],
     input[type="file"],
-    input[type="submit"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-    input[type="submit"] { background-color: #3498db; color: white; font-weight: bold; cursor: pointer; }
-    input[type="submit"]:hover { background-color: #2980b9; }
-    #successMessage { display: none; text-align: center; }
-    #regionNameDisplay { font-weight: bold; font-size: 16px; margin-top: 10px; }
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input[type="submit"] {
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background-color: #2980b9;
+    }
+    .success-message {
+      text-align: center;
+      color: green;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 20px;
+    }
   </style>
   <script>
     window.onload = function () {
+      // Success message logic
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("status") === "success") {
+        const region = params.get("region")?.toUpperCase() || "REGION";
+        const source = params.get("source")?.charAt(0).toUpperCase() + params.get("source")?.slice(1).toLowerCase() || "Gate Pass";
+        document.body.innerHTML = `
+          <div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>
+        `;
+        return;
+      }
+
+      // Get GPS location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           document.getElementById("latitude").value = position.coords.latitude;
@@ -27,53 +83,41 @@
           alert("Error getting location. Please allow location access.");
         });
       } else {
-        alert("Geolocation is not supported by this browser.");
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("success") === "true") {
-        document.querySelector("form").style.display = "none";
-        const successDiv = document.getElementById("successMessage");
-        const region = urlParams.get("region") || "Unknown Region";
-        document.getElementById("regionNameDisplay").textContent = `Region: ${region}`;
-        successDiv.style.display = "block";
+        alert("Geolocation not supported.");
       }
     };
   </script>
 </head>
 <body>
-  <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
-    <h2>BAGT - Gate Pass Outward</h2>
+  <div class="container">
+    <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+      <h2>BAGT - Gate Pass Outward</h2>
 
-    <label for="invoice_date">📅 Invoice Date:</label>
-    <input type="date" name="invoice_date" id="invoice_date" required>
+      <label for="invoice_date">📅 Invoice Date:</label>
+      <input type="date" name="invoice_date" id="invoice_date" required>
 
-    <label for="invoice_number">🧾 Invoice Number:</label>
-    <input type="text" name="invoice_number" required>
+      <label for="invoice_number">🧾 Invoice Number:</label>
+      <input type="text" name="invoice_number" required>
 
-    <label for="serial_number">🔢 Serial Number:</label>
-    <input type="text" name="serial_number" required>
+      <label for="serial_number">🔢 Serial Number:</label>
+      <input type="text" name="serial_number" required>
 
-    <label for="invoice_photo">🖼️ Invoice Photo (Required):</label>
-    <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
+      <label for="invoice_photo">🖼️ Invoice Photo (Required):</label>
+      <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
 
-    <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
-    <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
+      <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
+      <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
 
-    <label for="goods_photo_2">📦 Goods Photo 2 (Optional):</label>
-    <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
+      <label for="goods_photo_2">📦 Goods Photo 2 (Optional):</label>
+      <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
 
-    <input type="hidden" name="region" value="BAGT">
-    <input type="hidden" name="source" value="Outward">
-    <input type="hidden" name="latitude" id="latitude">
-    <input type="hidden" name="longitude" id="longitude">
+      <input type="hidden" name="region" value="BAGT">
+      <input type="hidden" name="source" value="Inward">
+      <input type="hidden" name="latitude" id="latitude">
+      <input type="hidden" name="longitude" id="longitude">
 
-    <input type="submit" value="Submit Gate Pass">
-  </form>
-
-  <div id="successMessage">
-    <h2 style="color: green;">Gate Pass Submitted Successfully</h2>
-    <p id="regionNameDisplay"></p>
+      <input type="submit" value="Submit Gate Pass">
+    </form>
   </div>
 </body>
 </html>
