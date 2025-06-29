@@ -4,21 +4,51 @@
   <title>MUMT - Gate Pass Outward</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f2f2f2; display: flex; justify-content: center; flex-direction: column; align-items: center; min-height: 100vh; }
-    form, #successMessage { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
-    h2 { text-align: center; color: #2c3e50; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input[type="text"], input[type="date"], input[type="file"], input[type="submit"] {
-      width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
     }
     input[type="submit"] {
-      background-color: #3498db; color: white; font-weight: bold; cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
     }
     input[type="submit"]:hover {
       background-color: #2980b9;
     }
-    #successMessage { display: none; text-align: center; }
-    #regionNameDisplay { font-weight: bold; font-size: 16px; margin-top: 10px; }
   </style>
   <script>
     window.onload = function () {
@@ -26,20 +56,11 @@
         navigator.geolocation.getCurrentPosition(function (position) {
           document.getElementById("latitude").value = position.coords.latitude;
           document.getElementById("longitude").value = position.coords.longitude;
-        }, function () {
+        }, function (error) {
           alert("Error getting location. Please allow location access.");
         });
       } else {
         alert("Geolocation is not supported by this browser.");
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("success") === "true") {
-        document.querySelector("form").style.display = "none";
-        const successDiv = document.getElementById("successMessage");
-        const region = urlParams.get("region") || "Unknown Region";
-        document.getElementById("regionNameDisplay").textContent = `Region: ${region}`;
-        successDiv.style.display = "block";
       }
     };
   </script>
@@ -57,7 +78,7 @@
     <label for="serial_number">🔢 Serial Number:</label>
     <input type="text" name="serial_number" required>
 
-    <label for="invoice_photo">🖼️ Invoice Photo (Required):</label>
+    <label for="invoice_photo">🖼 Invoice Photo (Required):</label>
     <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
 
     <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
@@ -73,10 +94,5 @@
 
     <input type="submit" value="Submit Gate Pass">
   </form>
-
-  <div id="successMessage">
-    <h2 style="color: green;">Gate Pass Submitted Successfully</h2>
-    <p id="regionNameDisplay"></p>
-  </div>
 </body>
 </html>
