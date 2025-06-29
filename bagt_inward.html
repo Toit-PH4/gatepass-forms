@@ -12,8 +12,8 @@
       padding: 0;
       display: flex;
       justify-content: center;
-      min-height: 100vh;
       align-items: center;
+      min-height: 100vh;
     }
     .container {
       background: #fff;
@@ -60,31 +60,49 @@
       font-weight: bold;
       padding: 20px;
     }
+    .loading-message {
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+      font-size: 16px;
+    }
   </style>
   <script>
+    let latitudeCaptured = false;
+    let longitudeCaptured = false;
+
     window.onload = function () {
-      // Success message logic
       const params = new URLSearchParams(window.location.search);
       if (params.get("status") === "success") {
         const region = params.get("region")?.toUpperCase() || "REGION";
         const source = params.get("source")?.charAt(0).toUpperCase() + params.get("source")?.slice(1).toLowerCase() || "Gate Pass";
-        document.body.innerHTML = `
-          <div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>
-        `;
+        document.body.innerHTML = `<div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>`;
         return;
       }
 
-      // Get GPS location
+      const form = document.querySelector("form");
+      const submitButton = form.querySelector("input[type='submit']");
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           document.getElementById("latitude").value = position.coords.latitude;
           document.getElementById("longitude").value = position.coords.longitude;
+          latitudeCaptured = true;
+          longitudeCaptured = true;
+          submitButton.disabled = false;
         }, function () {
-          alert("Error getting location. Please allow location access.");
+          alert("⚠️ Please allow location access to submit the form.");
         });
       } else {
-        alert("Geolocation not supported.");
+        alert("Geolocation is not supported by this browser.");
       }
+
+      form.addEventListener("submit", function () {
+        document.body.innerHTML = `<div class="loading-message">⏳ Submitting your gate pass… Please wait</div>`;
+      });
+
+      // Initially disable button until location is set
+      submitButton.disabled = true;
     };
   </script>
 </head>
