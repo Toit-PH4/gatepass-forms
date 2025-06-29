@@ -12,8 +12,8 @@
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
       min-height: 100vh;
+      align-items: center;
     }
     .container {
       background: #fff;
@@ -23,6 +23,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 400px;
       width: 100%;
+      position: relative;
     }
     h2 {
       text-align: center;
@@ -53,62 +54,18 @@
     input[type="submit"]:hover {
       background-color: #2980b9;
     }
-    .success-message {
+    .loader {
+      display: none;
       text-align: center;
       color: green;
-      font-size: 18px;
       font-weight: bold;
-      padding: 20px;
-    }
-    .loading-message {
-      text-align: center;
-      font-weight: bold;
-      color: #333;
-      font-size: 16px;
+      margin-top: 20px;
     }
   </style>
-  <script>
-    let latitudeCaptured = false;
-    let longitudeCaptured = false;
-
-    window.onload = function () {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("status") === "success") {
-        const region = params.get("region")?.toUpperCase() || "REGION";
-        const source = params.get("source")?.charAt(0).toUpperCase() + params.get("source")?.slice(1).toLowerCase() || "Gate Pass";
-        document.body.innerHTML = `<div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>`;
-        return;
-      }
-
-      const form = document.querySelector("form");
-      const submitButton = form.querySelector("input[type='submit']");
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-          document.getElementById("latitude").value = position.coords.latitude;
-          document.getElementById("longitude").value = position.coords.longitude;
-          latitudeCaptured = true;
-          longitudeCaptured = true;
-          submitButton.disabled = false;
-        }, function () {
-          alert("⚠️ Please allow location access to submit the form.");
-        });
-      } else {
-        alert("Geolocation is not supported by this browser.");
-      }
-
-      form.addEventListener("submit", function () {
-        document.body.innerHTML = `<div class="loading-message">⏳ Submitting your gate pass… Please wait</div>`;
-      });
-
-      // Initially disable button until location is set
-      submitButton.disabled = true;
-    };
-  </script>
 </head>
 <body>
   <div class="container">
-    <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+    <form id="gatePassForm" action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
       <h2>BAGT - Gate Pass Inward</h2>
 
       <label for="invoice_date">📅 Invoice Date:</label>
@@ -135,7 +92,41 @@
       <input type="hidden" name="longitude" id="longitude">
 
       <input type="submit" value="Submit Gate Pass">
+      <div class="loader" id="loadingMessage">📤 Submitting your gate pass, please wait...</div>
     </form>
   </div>
+
+  <script>
+    const form = document.getElementById('gatePassForm');
+    const loader = document.getElementById('loadingMessage');
+
+    form.addEventListener('submit', function (e) {
+      const lat = document.getElementById("latitude").value;
+      const lng = document.getElementById("longitude").value;
+
+      if (!lat || !lng) {
+        e.preventDefault();
+        alert("📍 Location not captured yet. Please allow location access and wait 2 seconds.");
+        return;
+      }
+
+      loader.style.display = "block";
+    });
+
+    // Auto location capture
+    window.onload = function () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            document.getElementById("latitude").value = position.coords.latitude;
+            document.getElementById("longitude").value = position.coords.longitude;
+          },
+          function () {
+            alert("⚠️ Location access denied. Please enable it to submit.");
+          }
+        );
+      }
+    };
+  </script>
 </body>
 </html>
