@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BAGT - Gate Pass Inward</title>
+  <title>SANB - Gate Pass Outward</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * { box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
-      min-height: 100vh;
-      align-items: center;
     }
-    .container {
-      background: #fff;
+    form {
+      background-color: #fff;
       padding: 20px;
-      margin: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 400px;
@@ -27,7 +23,6 @@
     h2 {
       text-align: center;
       color: #2c3e50;
-      margin-bottom: 10px;
     }
     label {
       display: block;
@@ -43,6 +38,7 @@
       margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      box-sizing: border-box;
     }
     input[type="submit"] {
       background-color: #3498db;
@@ -53,34 +49,15 @@
     input[type="submit"]:hover {
       background-color: #2980b9;
     }
-    .success-message {
-      text-align: center;
-      color: green;
-      font-size: 18px;
-      font-weight: bold;
-      padding: 20px;
-    }
   </style>
   <script>
     window.onload = function () {
-      // Show success message if redirected from backend
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("status") === "success") {
-        const region = params.get("region") || "Region";
-        const source = params.get("source") || "Gate Pass";
-        document.body.innerHTML = `
-          <div class="success-message">${region} - Gate Pass ${source} submitted successfully ✅</div>
-        `;
-        return;
-      }
-
-      // Get location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           document.getElementById("latitude").value = position.coords.latitude;
           document.getElementById("longitude").value = position.coords.longitude;
         }, function () {
-          alert("Error getting location. Please allow location access.");
+          alert("Please allow location access.");
         });
       } else {
         alert("Geolocation not supported.");
@@ -89,35 +66,33 @@
   </script>
 </head>
 <body>
-  <div class="container">
-    <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
-      <h2>BAGT - Gate Pass Inward</h2>
+  <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+    <h2>SANB - Gate Pass Outward</h2>
 
-      <label for="invoice_date">📅 Invoice Date:</label>
-      <input type="date" name="invoice_date" id="invoice_date" required>
+    <label for="invoice_date">📅 Invoice Date:</label>
+    <input type="date" name="invoice_date" id="invoice_date" required>
 
-      <label for="invoice_number">🧾 Invoice Number:</label>
-      <input type="text" name="invoice_number" required>
+    <label for="invoice_number">🧾 Invoice Number:</label>
+    <input type="text" name="invoice_number" required>
 
-      <label for="serial_number">🔢 Serial Number:</label>
-      <input type="text" name="serial_number" required>
+    <label for="serial_number">🔢 Serial Number:</label>
+    <input type="text" name="serial_number" required>
 
-      <label for="invoice_photo">🖼️ Invoice Photo (Required):</label>
-      <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
+    <label for="invoice_photo">🖼 Invoice Photo (Required):</label>
+    <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
 
-      <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
-      <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
+    <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
+    <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
 
-      <label for="goods_photo_2">📦 Goods Photo 2 (Optional):</label>
-      <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
+    <label for="goods_photo_2">📦 Goods Photo 2 (Optional):</label>
+    <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
 
-      <input type="hidden" name="region" value="BAGT">
-      <input type="hidden" name="source" value="Inward">
-      <input type="hidden" name="latitude" id="latitude">
-      <input type="hidden" name="longitude" id="longitude">
+    <input type="hidden" name="region" value="SANB">
+    <input type="hidden" name="source" value="Outward">
+    <input type="hidden" name="latitude" id="latitude">
+    <input type="hidden" name="longitude" id="longitude">
 
-      <input type="submit" value="Submit Gate Pass">
-    </form>
-  </div>
+    <input type="submit" value="Submit Gate Pass">
+  </form>
 </body>
 </html>
