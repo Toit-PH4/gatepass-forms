@@ -4,9 +4,7 @@
   <title>BAGT - Gate Pass Inward</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
@@ -15,6 +13,7 @@
       display: flex;
       justify-content: center;
       min-height: 100vh;
+      align-items: center;
     }
     .container {
       background: #fff;
@@ -59,12 +58,23 @@
       color: green;
       font-size: 18px;
       font-weight: bold;
-      margin-top: 20px;
+      padding: 20px;
     }
   </style>
   <script>
     window.onload = function () {
-      // Get location
+      // Success message logic
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("status") === "success") {
+        const region = params.get("region")?.toUpperCase() || "REGION";
+        const source = params.get("source")?.charAt(0).toUpperCase() + params.get("source")?.slice(1).toLowerCase() || "Gate Pass";
+        document.body.innerHTML = `
+          <div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>
+        `;
+        return;
+      }
+
+      // Get GPS location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
           document.getElementById("latitude").value = position.coords.latitude;
@@ -74,17 +84,6 @@
         });
       } else {
         alert("Geolocation not supported.");
-      }
-
-      // Show success message if redirected from backend
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("status") === "success") {
-        const region = params.get("region") || "Region";
-        const msg = document.createElement("div");
-        msg.className = "success-message";
-        msg.textContent = region + " - Gate Pass submitted successfully ✅";
-        document.body.innerHTML = '';
-        document.body.appendChild(msg);
       }
     };
   </script>
