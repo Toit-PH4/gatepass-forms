@@ -23,7 +23,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 400px;
       width: 100%;
-      position: relative;
     }
     h2 {
       text-align: center;
@@ -54,18 +53,55 @@
     input[type="submit"]:hover {
       background-color: #2980b9;
     }
-    .loader {
-      display: none;
+    .success-message {
       text-align: center;
       color: green;
+      font-size: 18px;
       font-weight: bold;
-      margin-top: 20px;
+      padding: 20px;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-top: 15px;
     }
   </style>
+  <script>
+    window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("status") === "success") {
+        const region = params.get("region")?.toUpperCase() || "REGION";
+        const source = params.get("source")?.charAt(0).toUpperCase() + params.get("source")?.slice(1).toLowerCase() || "Gate Pass";
+        document.body.innerHTML = `
+          <div class="success-message">${region} – Gate Pass ${source} submitted successfully ✅</div>
+        `;
+        return;
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          document.getElementById("latitude").value = position.coords.latitude;
+          document.getElementById("longitude").value = position.coords.longitude;
+        }, function () {
+          alert("Error getting location. Please allow location access.");
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    };
+
+    function showLoading() {
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("loadingMessage").style.display = "block";
+    }
+  </script>
 </head>
 <body>
   <div class="container">
-    <form id="gatePassForm" action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+    <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
       <h2>BAGT - Gate Pass Inward</h2>
 
       <label for="invoice_date">📅 Invoice Date:</label>
@@ -91,42 +127,9 @@
       <input type="hidden" name="latitude" id="latitude">
       <input type="hidden" name="longitude" id="longitude">
 
-      <input type="submit" value="Submit Gate Pass">
-      <div class="loader" id="loadingMessage">📤 Submitting your gate pass, please wait...</div>
+      <input type="submit" id="submitBtn" value="Submit Gate Pass">
+      <div id="loadingMessage" class="loading">Submitting your Gate Pass... Please wait ⏳</div>
     </form>
   </div>
-
-  <script>
-    const form = document.getElementById('gatePassForm');
-    const loader = document.getElementById('loadingMessage');
-
-    form.addEventListener('submit', function (e) {
-      const lat = document.getElementById("latitude").value;
-      const lng = document.getElementById("longitude").value;
-
-      if (!lat || !lng) {
-        e.preventDefault();
-        alert("📍 Location not captured yet. Please allow location access and wait 2 seconds.");
-        return;
-      }
-
-      loader.style.display = "block";
-    });
-
-    // Auto location capture
-    window.onload = function () {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          function (position) {
-            document.getElementById("latitude").value = position.coords.latitude;
-            document.getElementById("longitude").value = position.coords.longitude;
-          },
-          function () {
-            alert("⚠️ Location access denied. Please enable it to submit.");
-          }
-        );
-      }
-    };
-  </script>
 </body>
 </html>
