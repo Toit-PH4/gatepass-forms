@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BAGT - Gate Pass Inward</title>
+  <title>BAGT - Gate Pass Outward</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
@@ -78,8 +78,8 @@
   </script>
 </head>
 <body>
-  <form action="https://virus-chambers-sure-unusual.trycloudflare.com/upload" method="post" enctype="multipart/form-data">
-    <h2>BAGT - Gate Pass Inward</h2>
+  <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+    <h2>BAGT - Gate Pass Outward</h2>
 
     <label for="invoice_date">📅 Invoice Date:</label>
     <input type="date" name="invoice_date" id="invoice_date" required>
@@ -90,7 +90,7 @@
     <label for="serial_number">🔢 Serial Number:</label>
     <input type="text" name="serial_number" required>
 
-    <label for="invoice_photo">🖼 Invoice Photo (Required):</label>
+    <label for="invoice_photo">🖼️ Invoice Photo (Required):</label>
     <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
 
     <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
@@ -100,7 +100,7 @@
     <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
 
     <input type="hidden" name="region" value="BAGT">
-    <input type="hidden" name="source" value="Inward">
+    <input type="hidden" name="source" value="Outward">
     <input type="hidden" name="latitude" id="latitude">
     <input type="hidden" name="longitude" id="longitude">
 
