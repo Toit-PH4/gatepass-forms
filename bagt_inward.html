@@ -1,94 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gate Pass BAGT Inward</title>
+  <title>BAGT - Gate Pass Inward</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
       margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
+
     form {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
+      background-color: #ffffff;
       padding: 20px;
-      border-radius: 8px;
+      margin: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
     }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
     label {
       display: block;
-      margin: 10px 0 5px;
+      margin-top: 15px;
+      font-weight: bold;
     }
-    input, select {
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    input[type="submit"] {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
-    button {
-      background-color: #007bff;
+
+    input[type="submit"] {
+      background-color: #3498db;
       color: white;
-      border: none;
-      padding: 12px;
+      font-weight: bold;
       cursor: pointer;
-      border-radius: 4px;
     }
-    .center-message {
-      text-align: center;
-      font-size: 18px;
-      margin-top: 50px;
-      color: green;
+
+    input[type="submit"]:hover {
+      background-color: #2980b9;
     }
   </style>
+  <script>
+    window.onload = function () {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          document.getElementById("latitude").value = position.coords.latitude;
+          document.getElementById("longitude").value = position.coords.longitude;
+        }, function (error) {
+          alert("Error getting location. Please allow location access.");
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    };
+  </script>
 </head>
 <body>
+  <form action="http://52.91.163.4:5000/upload" method="post" enctype="multipart/form-data">
+    <h2>BAGT - Gate Pass Inward</h2>
 
-<form action="https://fotos-xhtml-slides-flu.trycloudflare.com/upload" method="POST" enctype="multipart/form-data">
-  <h2>Gate Pass Inward - BAGT</h2>
+    <label for="invoice_date">📅 Invoice Date:</label>
+    <input type="date" name="invoice_date" id="invoice_date" required>
 
-  <label for="invoice_date">Invoice Date:</label>
-  <input type="date" name="invoice_date" required>
+    <label for="invoice_number">🧾 Invoice Number:</label>
+    <input type="text" name="invoice_number" required>
 
-  <label for="invoice_number">Invoice Number:</label>
-  <input type="text" name="invoice_number" required>
+    <label for="serial_number">🔢 Serial Number:</label>
+    <input type="text" name="serial_number" required>
 
-  <label for="serial_number">Serial Number:</label>
-  <input type="text" name="serial_number" required>
+    <label for="invoice_photo">🖼 Invoice Photo (Required):</label>
+    <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
 
-  <label for="invoice_photo">Invoice Photo (Mandatory):</label>
-  <input type="file" name="invoice_photo" accept="image/*" capture="environment" required>
+    <label for="goods_photo_1">📦 Goods Photo 1 (Required):</label>
+    <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
 
-  <label for="goods_photo_1">Goods Photo 1 (Mandatory):</label>
-  <input type="file" name="goods_photo_1" accept="image/*" capture="environment" required>
+    <label for="goods_photo_2">📦 Goods Photo 2 (Optional):</label>
+    <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
 
-  <label for="goods_photo_2">Goods Photo 2 (Optional):</label>
-  <input type="file" name="goods_photo_2" accept="image/*" capture="environment">
+    <input type="hidden" name="region" value="BAGT">
+    <input type="hidden" name="source" value="Inward">
+    <input type="hidden" name="latitude" id="latitude">
+    <input type="hidden" name="longitude" id="longitude">
 
-  <input type="hidden" name="region" value="BAGT">
-  <input type="hidden" name="source" value="Inward">
-  <input type="hidden" name="timestamp" id="timestamp">
-  <input type="hidden" name="latitude" id="latitude">
-  <input type="hidden" name="longitude" id="longitude">
-
-  <button type="submit">Submit</button>
-</form>
-
-<script>
-  // Auto-fill timestamp and location
-  document.addEventListener("DOMContentLoaded", () => {
-    const timestamp = new Date();
-    document.getElementById("timestamp").value = timestamp.toISOString();
-
-    navigator.geolocation.getCurrentPosition(position => {
-      document.getElementById("latitude").value = position.coords.latitude;
-      document.getElementById("longitude").value = position.coords.longitude;
-    }, err => {
-      console.warn("Location capture failed", err);
-    });
-  });
-</script>
-
+    <input type="submit" value="Submit Gate Pass">
+  </form>
 </body>
 </html>
